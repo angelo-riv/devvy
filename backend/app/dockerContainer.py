@@ -65,7 +65,7 @@ async def run_user_code(folder_bytes: bytes):
                 logs = container.logs()
             except Exception as e:
                 # Timeout or other error: stop container forcibly
-                result = 0
+                result = 1
                 container.stop()
                 logs = container.logs()
 
@@ -82,21 +82,3 @@ async def run_user_code(folder_bytes: bytes):
 
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
-
-
-async def run_dummy_flask():
-    # Get absolute path to the zip file
-    zip_path = os.path.join(os.path.dirname(__file__),"flask_dummy.zip")
-
-    # Read zip file as bytes
-    with open(zip_path, "rb") as f:
-        folder_bytes = f.read()
-
-    # Call the updated run_user_code that accepts zip bytes
-    output = await run_user_code(folder_bytes)
-    print(output)
-
-
-if __name__ == "__main__":
- asyncio.run(run_dummy_flask())
-
