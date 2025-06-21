@@ -1,8 +1,7 @@
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
-
-load_dotenv()
+from models import User, Questions, Answers
 
 # Fetch variables
 USER = os.getenv("user")
@@ -14,6 +13,7 @@ DBNAME = os.getenv("dbname")
 DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
 
 engine = create_engine(DATABASE_URL)
+
 
 #Create branch
 
