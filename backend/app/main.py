@@ -41,12 +41,12 @@ def test_db(db: Session = Depends(get_db)):
 
 @app.get("/getQuestions")
 def get_problems():
-    questions = session.query(User).all()
+    questions = session.query(Questions).all()
     return {"question_id": [question.question_id for question in questions], "question": [question.question for question in questions]}
 
 @app.get("/getQuestionsDescription")
 def get_problems():
-    questions = session.query(User).all()
+    questions = session.query(Questions).all()
     return {"question_id": [question.question_id for question in questions], "description": [question.description for question in questions]}
 
 @app.get("/getProblemId/{question_id}/getUser{username}")
