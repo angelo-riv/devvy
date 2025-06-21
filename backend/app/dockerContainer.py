@@ -68,6 +68,8 @@ async def run_user_code(folder_bytes: bytes):
                 container.stop()
                 logs = container.logs()
 
+            container.remove(force = True)
+
             return [result, logs.decode()]
 
         result = await loop.run_in_executor(None, run_container)
