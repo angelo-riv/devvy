@@ -1,6 +1,6 @@
 const Problems = () => {
   return ( 
-    <div>
+    <div className = "problems-page">
       Problems
     </div>
    );

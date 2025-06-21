@@ -7,11 +7,13 @@ const Navbar = () => {
       <img src="/logo.png" alt="Logo" className="nav-logo" />
       <h1>Devvy</h1>
     </div>
-    <div className = "right-navbar">
+    <div className = "mid-navbar">
       <Link to = "/">Home</Link>
       <Link to = "/problems">Problems</Link>
       <Link to = "/explore">Explore</Link>
       <Link to = "/events">Events</Link>
+    </div>
+    <div className = "right-navbar">
       <Link to = "/profile">Profile</Link>
     </div>
   </div> );
