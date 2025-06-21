@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Column, String, Integer, Boolean, Boolean, Text, ForeignKey, UniqueConstraint, create_engine
+    Column, String, Integer, Boolean, Boolean, Text, LargeBinary,ForeignKey, UniqueConstraint, create_engine
 )
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -23,24 +23,25 @@ class Questions(Base):
     __tablename__ = "questions"
 
     question_id = Column(Integer, primary_key=True, autoincrement=False)  # manually set
+    question = Column(String, nullable=False)
     description = Column(Text, nullable=False)
     tags = Column(ARRAY(String), default=[])
     storage_id = Column(String, nullable=False)  # Supabase storage ref
     diff = Column(String, nullable=False)        # difficulty
-    test_cases = Column(ARRAY(String), default=[])
 
 
 # --- ANSWERS MODEL ---
 class Answers(Base):
     __tablename__ = "answers"
 
-    answer_id = Column(Integer, primary_key=True, autoincrement=False)
+    answer_id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, ForeignKey("users.username"), nullable=False)
     question_id = Column(Integer, ForeignKey("questions.question_id"), nullable=False)
-    code = Column(Text, nullable=False)
+    code = Column(LargeBinary, nullable=False)
     passed_cases = Column(Integer, nullable=False)
     total_cases = Column(Integer, nullable=False)
     passed = Column(Boolean, nullable=False)
+    error = Column(Text, nullable=True)  # Error message if any
 
     __table_args__ = (
         UniqueConstraint("answer_id", name="uq_answer_id"),
