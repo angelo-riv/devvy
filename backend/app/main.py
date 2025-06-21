@@ -4,11 +4,11 @@ uvicorn app.main:app --reload
 from fastapi import FastAPI, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from database import SessionLocal, Base, engine
+from app.database import SessionLocal, Base, engine
 from supabase import create_client
 from dotenv import load_dotenv
 import os
-from models import User, Questions, Answers
+from app.models import User, Questions, Answers
 
 app = FastAPI()
 
@@ -16,9 +16,6 @@ load_dotenv()
 url=os.getenv("SUPABASE_URL")
 key=os.getenv("SUPABASE_KEY")
 bucket=os.getenv("SUPABASE_BUCKET")
-print("Supabase URL:", repr(url))
-print("Supabase Key:", "FOUND" if key else "MISSING")
-
 
 supabase = create_client(url, key)
 
@@ -78,7 +75,7 @@ def get_problem_id(question_id: int, username: str):
         "passed": answer[0].passed
     }
 
-@app.post("problem-code/{folder}")
+@app.post("/problem-code/{folder}")
 async def get_problem(folder: str):
     """
     Gets all files (regardless of extension) in the specified folder from Supabase storage.
@@ -94,9 +91,5 @@ async def get_problem(folder: str):
         supabase.storage.from_(bucket).get_public_url(f"{folder}/{file['name']}")
         for file in response
         if "name" in file
-    ]
+        ]
     }
-
-if __name__ == "__main__":
-    test = get_problem("test")
-    print(test)
