@@ -48,16 +48,17 @@ async def run_user_code(folder_bytes: bytes):
         # Step 4: Run container
         def run_container():
 
-            timeout_sec=0.5  
+            timeout_sec=2 
 
-            container = client.containers.run(
+            container = client.containers.create(
                 image=image_tag,
                 detach=True,
                 mem_limit="256m",
                 cpu_quota=50000,
-                network_disabled=True,
-                remove=True
+                network_disabled=True
             )
+
+            container.start()
             try:
                 # Wait for container to finish with timeout
                 result = container.wait(timeout=timeout_sec)
@@ -73,16 +74,8 @@ async def run_user_code(folder_bytes: bytes):
             return [result, logs.decode()]
 
         result = await loop.run_in_executor(None, run_container)
-        testPassed = result[1].count("True")
-        testFailed = result[1].count("False")
-
-        if (result[0] == 0):
-            result[1] = (testPassed, testPassed + testFailed)
-
-        else:
-            result[0] = 1
-
-        return result #  [1, (testPassed, totalTessed)] or [0, error logs] 0 indicates success, 1 indicates failure 
+        
+        return result 
 
     except Exception as e:
         return f"Error: {str(e)}"
