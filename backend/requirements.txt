@@ -1,9 +1,9 @@
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 supabase
-pydantic
 python-dotenv
 docker
 asyncio
+python-multipart
