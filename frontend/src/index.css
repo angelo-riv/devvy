@@ -11,3 +11,102 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*navbar- styling*/
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid #333;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.nav-title {
+  font-size: 20px;
+  margin-right: 20px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 16px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-links a:hover {
+  color: #4ea8de;
+}
+
+.active {
+  border-bottom: 2px solid #4ea8de;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mode-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.dark {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.light {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+/* navbar - Ensure all links are consistent */
+.navbar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  color: #4ea8de;
+}
+
+.active {
+  border-bottom: 2px solid #4ea8de;
+}
+
+/* navbar - Logo + Brand */
+.nav-title {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: 'Segoe UI', 'Inter', sans-serif;
+  background: linear-gradient(to right, #4ea8de, #38bdf8);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
