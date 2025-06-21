@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import os
 from app.models import User, Questions, Answers
 from dockerContainer import run_user_code
+import base64
 
 app = FastAPI()
 
@@ -58,22 +59,58 @@ def get_problem_id(question_id: int, username: str):
     if len(answer) == 0:
         return {
         "submission": False,
-        "question_id": None,
-        "description": None,
-        "tags": None,
-        "storage_id": None,
-        "difficulty": None,
-        "test_cases": None
+        "code": None,
+        "total_cases": None,
+        "passed_cases": None,
+        "passed": None,
+        "error": None
     }
+
+    encoded_code = base64.b64encode(answers.code).decode('utf-8')
     
     return {
         "submission": True,
-        "question_id": answer[0].question_id,
-        "code": answer[0].code,
+        "code": encoded_code,
         "total_cases": answer[0].total_cases,
         "passed_cases": answer[0].passed_cases,
-        "passed": answer[0].passed
+        "passed": answer[0].passed,
+        "error": answer[0].error
     }
+
+'''
+dumping this here for the frontend to see how to convert the code byte back into a zip file 
+
+async function fetchAndUnzipCode(questionId, username) {
+  const res = await fetch(`/getProblemId/${questionId}/getUser${username}`);
+  const data = await res.json();
+
+  if (!data.submission) {
+    console.log("No submission found");
+    return;
+  }
+
+  const base64String = data.code_zip_base64;
+  const binaryString = atob(base64String); // decode base64 to binary string
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  // Now bytes contains the zip file data as Uint8Array
+  // Use JSZip or similar to unzip and read files from bytes
+
+  const jszip = new JSZip();
+  const zip = await jszip.loadAsync(bytes);
+  for (const filename of Object.keys(zip.files)) {
+    const content = await zip.files[filename].async("string");
+    console.log(`File: ${filename}`, content);
+  }
+}
+
+
+
+'''
 
 def get_problem(folder: str):
     """
@@ -89,7 +126,6 @@ def get_problem(folder: str):
         supabase.storage.from_(bucket).get_public_url(f"{folder}/{file['name']}")
         for file in response if file.get("name")
     ]
-
 
 @app.post("/submit")
 async def submit_answer(
