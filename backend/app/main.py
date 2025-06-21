@@ -78,9 +78,8 @@ def get_problem_id(question_id: int, username: str):
         "passed": answer[0].passed
     }
 
-
-
-def get_problem(folder: str):
+@app.post("problem-code/{folder}")
+async def get_problem(folder: str):
     """
     Gets all files (regardless of extension) in the specified folder from Supabase storage.
     """
@@ -91,11 +90,12 @@ def get_problem(folder: str):
         return "Folder not found"
 
     # Return public URLs for all files in the folder (excluding subfolders)
-    return [
+    return {"files":[
         supabase.storage.from_(bucket).get_public_url(f"{folder}/{file['name']}")
         for file in response
         if "name" in file
     ]
+    }
 
 if __name__ == "__main__":
     test = get_problem("test")
