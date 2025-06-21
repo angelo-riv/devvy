@@ -73,8 +73,7 @@ def get_problem_id(question_id: int, username: str):
         "code": encoded_code,
         "total_cases": answer[0].total_cases,
         "passed_cases": answer[0].passed_cases,
-        "passed": answer[0].passed,
-        "error": answer[0].error
+        "passed": answer[0].passed
     }
 
 '''
@@ -112,20 +111,25 @@ async function fetchAndUnzipCode(questionId, username) {
 
 '''
 
-def get_problem(folder: str):
+@app.post("/problem-code/{folder}")
+async def get_problem(folder: str):
     """
-    Gets the problem folder from Supabase storage.
+    Gets all files (regardless of extension) in the specified folder from Supabase storage.
     """
     response = supabase.storage.from_(bucket).list(folder)
 
-    #Handle folder not found
-    if not response:
+    # Handle folder not found or empty
+    if not response or not isinstance(response, list):
         return "Folder not found"
-    
-    return [
+
+    # Return public URLs for all files in the folder (excluding subfolders)
+    return {"files":[
         supabase.storage.from_(bucket).get_public_url(f"{folder}/{file['name']}")
-        for file in response if file.get("name")
-    ]
+        for file in response
+        if "name" in file
+        ]
+    }
+
 
 @app.post("/submit")
 async def submit_answer(
