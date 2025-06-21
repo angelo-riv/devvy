@@ -1,10 +1,3 @@
-import os
-import uuid
-import shutil
-import asyncio
-import docker
-
-client = docker.from_env()
 
 import zipfile
 import io
