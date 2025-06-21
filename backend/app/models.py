@@ -23,6 +23,7 @@ class Questions(Base):
     __tablename__ = "questions"
 
     question_id = Column(Integer, primary_key=True, autoincrement=False)  # manually set
+    question = Column(String, nullable=False)
     description = Column(Text, nullable=False)
     tags = Column(ARRAY(String), default=[])
     storage_id = Column(String, nullable=False)  # Supabase storage ref
