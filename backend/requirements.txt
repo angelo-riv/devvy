@@ -1,6 +1,10 @@
 fastapi
-uvicorn[standard]
+uvicorn
 sqlalchemy
 psycopg2-binary
+<<<<<<< HEAD
 python-dotenv
 supabase
+=======
+python-dotenv
+>>>>>>> 1a9dce83c9dc26f465800099b83b4b7ec0b303d1
