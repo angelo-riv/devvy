@@ -21,6 +21,5 @@ function App() {
     </div>
   );
 }
-//Test test
 
 export default App;
