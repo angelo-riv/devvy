@@ -95,7 +95,7 @@ const Profile = () => {
                     <div>
                       <h3>{activity.title}</h3>
                       <div className="activity-meta">
-                        <span>{activity.time}</span>
+                        <span className = "activity-time">{activity.time}</span>
                         <span className={getDifficultyColor(activity.difficulty)}>{activity.difficulty}</span>
                       </div>
                     </div>
@@ -108,9 +108,33 @@ const Profile = () => {
           <div className="sidebar">
             <div className="achievements-section">
               <h2>Achievements</h2>
-              <div className="achievement">🥇 Contest Champion <small>Won 10+ contests</small></div>
-              <div className="achievement">🔥 30-Day Streak <small>Solved daily problems</small></div>
-              <div className="achievement">💡 Problem Setter <small>Created 50+ problems</small></div>
+              <div className="achievement">
+                <div className = "achievement-icon">
+                  🥇
+                </div>
+                <div className = "achievement-text">
+                  <span>Contest Champion </span>
+                  <small>Won 10+ contests</small>
+                </div>
+              </div>
+              <div className="achievement">
+                <div className = "achievement-icon">
+                  🔥
+                </div>
+                <div className = "achievement-text">
+                  <span>30-Day Streak </span>
+                  <small>Solved daily problems</small>
+                </div>
+              </div>
+              <div className="achievement">
+                <div className = "achievement-icon">
+                  💡
+                </div>
+                <div className = "achievement-text">
+                  <span>Problem Setter </span>
+                  <small>Created 50+ problems</small>
+                </div>
+              </div>
             </div>
 
             <div className="contributions-section">

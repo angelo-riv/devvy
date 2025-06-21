@@ -12,7 +12,11 @@ const Navbar = () => {
     <div className={`navbar ${darkMode ? 'dark' : 'light'}`}>
       <div className="navbar-left">
         <img src="/logo.png" alt="Logo" className="nav-logo" />
-        <h1 className="nav-title">Devvy</h1>
+        <h1 className="nav-title">
+          <Link to="/" >
+            Devvy
+          </Link>
+        </h1>
 
         <nav className="nav-links">
           <Link to="/" className={isActive('/') ? 'active' : ''}>
@@ -34,9 +38,6 @@ const Navbar = () => {
         <Link to="/profile" className={isActive('/profile') ? 'active' : ''}>
           <User size={16} className="nav-icon" /> Profile
         </Link>
-        <button className="mode-toggle" onClick={() => setDarkMode(!darkMode)}>
-          {darkMode ? '🌞' : '🌙'}
-        </button>
       </div>
     </div>
   );
