@@ -239,6 +239,8 @@ async def submit_answer(
 
     results = await run_user_code(zip_bytes)
 
+    print(results[1])
+
     if results[0] == 0: 
         passed_cases = results[1].count("True")
         total_cases = passed_cases + results[1].count("False")

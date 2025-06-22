@@ -4,7 +4,6 @@ import axios from 'axios';
 import FileExplorer from '../components/FileExplorer';
 import Solutions from '../components/Solutions';
 import Submissions from '../components/Submissions';
-import JSZip from "jszip";
 
 const CodeEditor = () => {
   const [activeTab, setActiveTab] = useState('result');
@@ -70,12 +69,10 @@ const CodeEditor = () => {
 
   console.log('explorerData:', explorerData);
 
-  const handleSubmit = async () => {  
-      //Test
-  const username = "testUser"
-  
+//Test
+const username = "testUser";
 
-async function handleSubmit() {
+const handleSubmit = async () => {
   const zip = new JSZip();
 
 
@@ -101,41 +98,9 @@ async function handleSubmit() {
 
   const result = await res.json();
   console.log(result);
-  try {
-    const username = "testuser";
-    const res = await axios.get(`http://127.0.0.1:8000/getProblemId/${question_id}/getUser${username}`);
-    const data = res.data;
-    setResult(data);
-    console.log("hi",result);
-    if (!data.submission) {
-      console.log("No submission found");
-      return;
-    }
+  console.log(result.hasError)
+  setActiveTab("result")
 
-    if (!data.code) {
-      console.log("No code submitted");
-      return;
-    }
-
-    const base64String = data.code;
-    const binaryString = atob(base64String);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-
-    const jszip = new JSZip();
-    const zip = await jszip.loadAsync(bytes);
-    for (const filename of Object.keys(zip.files)) {
-      const content = await zip.files[filename].async("string");
-      console.log(`File: ${filename}`, content);
-    }
-    setActiveTab("result");
-    console.log("hi")
-  } catch (error) {
-    console.error("error", error);
-  }
 };
 
   return (
@@ -275,19 +240,19 @@ async function handleSubmit() {
                         )}
                         {activeTab === 'result' && (
                           <div className="result-section">
-                            {result.passed === false && (
+                            {!result.hasError && (
                               <>
                               <div className="result-status failed">
                               <span>{result.error}</span>
                             </div>
                             <div className="result-details">
-                              <p>Test Cases Passed: {result.passed_cases} of {result.total_cases}</p>
+                              <p>Test Cases Passed: {result.passed_cases} of {result.total_cases} </p>
                               <p>Runtime: 45ms</p>
                               <p>Memory: 2.1MB</p>
                             </div>
                             </>
                             )}
-                            {result.passed === true && (
+                            {result.hasError && (
                               <>
                               <div className="result-status success">
                               <span>{result.error ?? "All test cases Passed!"}</span>
