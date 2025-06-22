@@ -1,10 +1,11 @@
 // Profile.js
 import { Calendar, Code, Trophy, Users, GitBranch, Star, MessageCircle } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Profile = () => {
   const userStats = [
-    { label: "Problems Solved", value: "147", icon: Code, color: "blue" },
+    { label: "Problems Solved", value: "0", icon: Code, color: "blue" },
     { label: "Contest Wins", value: "12", icon: Trophy, color: "yellow" },
     { label: "Followers", value: "1.2K", icon: Users, color: "green" },
     { label: "Contributions", value: "89", icon: GitBranch, color: "purple" },
@@ -25,6 +26,9 @@ const Profile = () => {
     { name: "String Processing", level: 74, problems: 16 }
   ];
 
+  const [userInfo, setUserInfo] = useState({});
+  const [userProblems, setUserProblems] = useState([]);
+
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'Easy': return 'green';
@@ -38,7 +42,12 @@ const Profile = () => {
   useEffect(()=> {
     const getUserData = async () => {
       try{
-        const response = await axios.post(`http://127.0.0.1:8000/getProblemDescription/${question_id}`);
+        const username = "Fredrick";
+        const response = await axios.post(`http://127.0.0.1:8000/getUserData/Fredrick`);
+        console.log(response)
+        setUserInfo(response.data);
+        setUserProblems(response.data.solved_questions);
+        console.log(userStats[0].value)
       } catch (error) {
         console.error("Error loading profile data:", error);
       }
@@ -50,9 +59,9 @@ const Profile = () => {
     <div className="profile-container">
       <main className="main-content">
         <div className="profile-header">
-          <div className="profile-avatar">JD</div>
+          <div className="profile-avatar">{userInfo.username ? userInfo.username[0] : "?"}</div>
           <div className="profile-details">
-            <h1 className="profile-name">John Developer</h1>
+            <h1 className="profile-name">{userInfo.username}</h1>
             <p className="profile-title">Senior Software Engineer @TechCorp | Algorithm Enthusiast</p>
             <div className="profile-meta">
               <span><Calendar size={14} /> Joined March 2023</span>

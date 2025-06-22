@@ -571,6 +571,21 @@ body {
   background-color: rgba(248, 113, 113, 0.1);
 }
 
+.difficulty-badge-easy {
+  color: #4ade80;
+  background-color: rgba(74, 222, 128, 0.1);
+}
+
+.difficulty-badge-medium {
+  color: #facc15;
+  background-color: rgba(250, 204, 21, 0.1);
+}
+
+.difficulty-badge-hard {
+  color: #f87171;
+  background-color: rgba(248, 113, 113, 0.1);
+}
+
 .problem-description {
   color: #cbd5e1;
   font-size: 0.95rem;
