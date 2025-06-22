@@ -1,9 +1,14 @@
 // Home.jsx
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 import ProblemCard from '../components/ProblemCard';
 
 const Home = () => {
   const [problemCount, setProblemCount] = React.useState(null);
+  const [answerCount, setAnswerCount] = React.useState(null);
+  const [userCount, setUserCount] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/questions/count")
@@ -11,38 +16,62 @@ const Home = () => {
       .then(data => setProblemCount(data.count))
       .catch(() => setProblemCount("N/A"));
   }, []);
-  const recentProblems = [
-    {
-      title: "Two Sum with Constraints",
-      difficulty: "Medium",
-      author: "alex_dev",
-      timeAgo: "2 hours ago",
-      likes: 24,
-      comments: 8,
-      tags: ["Array", "Hash Table", "Dynamic Programming"],
-      description: "Given an array of integers and a target sum, find two numbers that add up to the target with additional constraints on time complexity."
-    },
-    {
-      title: "Binary Tree Path Traversal",
-      difficulty: "Hard",
-      author: "sarah_codes",
-      timeAgo: "4 hours ago",
-      likes: 18,
-      comments: 12,
-      tags: ["Tree", "Recursion", "DFS"],
-      description: "Implement a function to find all root-to-leaf paths in a binary tree that sum to a given target value."
-    },
-    {
-      title: "String Palindrome Checker",
-      difficulty: "Easy",
-      author: "mike_algorithms",
-      timeAgo: "6 hours ago",
-      likes: 31,
-      comments: 5,
-      tags: ["String", "Two Pointers"],
-      description: "Create an efficient algorithm to check if a given string is a palindrome, ignoring spaces and case sensitivity."
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/usercount")
+      .then(res => res.json())
+      .then(data => setUserCount(data.count))
+      .catch(() => setUserCount("N/A"));
+  }, []);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/answercount")
+      .then(res => res.json())
+      .then(data => setAnswerCount(data.count))
+      .catch(() => setAnswerCount("N/A"));
+  }, []);
+
+  const [problemsList, setProblemsList] = useState([]);
+  const [tagsList, setTagsList] = useState([]);
+  const history = useHistory();
+
+  useEffect(() => {
+    try {
+      const getProblemsData = async () => {
+        setLoading(true);
+        const response = await axios.get(`http://127.0.0.1:8000/getQuestionsDescription`);
+        const data = response.data;
+        console.log(data)
+        const transformed = data.question_id.map((_, index) => ({
+          problem_id: data.question_id[index],
+          title: String(data?.question?.[index] ?? ''),
+          description: data?.description?.[index] ?? '',
+          difficulty: data?.diff?.[index] ?? 'Easy',
+          author: "anonymous",  
+          timeAgo: "recently", 
+          likes: Math.floor(Math.random() * 50), 
+          comments: Math.floor(Math.random() * 10), 
+          tags: data?.tags?.[index], 
+        }));
+
+        const uniqueTags = Array.from(new Set(data.tags.flat()));
+        setTagsList(['All', ...uniqueTags]);
+
+        setProblemsList(transformed);
+        console.log(tagsList)
+      }
+      getProblemsData();
+    } 
+    catch (error) { 
+      console.error("Error loading problems data:", error); 
+    } finally {
+      setLoading(false);
     }
-  ];
+  }, []);
+  const handleClick = (problem) => {
+    console.log(problem.problem_id);
+    history.push(`/problemsinfo/${problem.problem_id}`);
+  }
 
   return (
     <div className="homepage">
@@ -62,11 +91,11 @@ const Home = () => {
             <div className="stat-label">Active Problems</div>
           </div>
           <div className="stat-card green">
-            <div className="stat-number-green">5,892</div>
+            <div className="stat-number-green">{answerCount !== null ? answerCount : "..."}</div>
             <div className="home-stat-label">Solutions Shared</div>
           </div>
           <div className="stat-card purple">
-            <div className="stat-number-purple">123</div>
+            <div className="stat-number-purple">{userCount !== null ? userCount : "..."}</div>
             <div className="stat-label">Active Developers</div>
           </div>
         </div>
@@ -77,17 +106,21 @@ const Home = () => {
             <span>Trending Problems</span>
           </h2>
           <div className="problems-list">
-            {recentProblems.map((problem, index) => (
-              <ProblemCard key={index} {...problem} />
-            ))}
+            {loading ? (
+              <div>Loading trending problems...</div>
+            ) : (
+              problemsList.slice(0,3).map((problem, index) => (
+                <ProblemCard key={index} {...problem} onClick = {() => handleClick(problem)}/>
+              ))
+            )}
           </div>
         </div>
 
         <div className="cta-section">
           <div className="cta-box">
-            <h3 className="cta-title">Ready to Share Your Problem?</h3>
+            <h3 className="cta-title">Ready to Share Your Solution?</h3>
             <p className="cta-subtitle">Join thousands of developers sharing and solving coding challenges together.</p>
-            <button className="cta-button">Post a Problem</button>
+            <button className="cta-button" onClick={() => history.push("/problems")}>Solve a Problem</button>
           </div>
         </div>
       </main>

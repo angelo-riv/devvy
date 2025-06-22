@@ -8,10 +8,12 @@ const CodeEditor = () => {
   const [activeTab, setActiveTab] = useState('testcase');
   const [activeSection, setActiveSection] = useState('code');
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+  const [problemData, setProblemData] = useState([]);
   const [explorerData, setExplorerData] = useState({ files: [], folders: [] });
   const [code, setCode] = useState('');
   const question_id = window.location.pathname.split('/').pop(); 
   const root_folder = question_id;
+  const [currentFile, setCurrentFile] = useState('');
   
   useEffect(() => {
     async function fetchExplorer() {
@@ -27,6 +29,7 @@ const CodeEditor = () => {
   const handleFileClick = async (fileUrl) => {
     const res = await fetch(fileUrl);
     const text = await res.text();
+    setCurrentFile(fileUrl.split('/').pop().split('?')[0]);
     setCode(text);
   };
 
@@ -52,10 +55,9 @@ const CodeEditor = () => {
   useEffect(() => {
     const getProblemData = async () => {
       try{
-        console.log(question_id);
         const response = await axios.post(`http://127.0.0.1:8000/getProblemDescription/${question_id}`);
         console.log(response);
-        const problemData = response.data;
+        setProblemData(response.data);
       } catch(error){
         console.error("Error fetching problem data:", error);
       }
@@ -70,15 +72,12 @@ const CodeEditor = () => {
     <nav className="nav-container">
       <div className="nav-content">
         <div className="nav-brand">
-          <h1>Question Name</h1>
+          <h1>{problemData.question}</h1>
         </div>
         <div className="nav-tabs">
           <button className={`nav-tab${activeSection === 'code' ? ' active' : ''}`} onClick={() => setActiveSection('code')}>Code</button>
           <button className={`nav-tab${activeSection === 'solutions' ? ' active' : ''}`} onClick={() => setActiveSection('solutions')}>Solutions</button>
           <button className={`nav-tab${activeSection === 'submissions' ? ' active' : ''}`} onClick={() => setActiveSection('submissions')}>Submissions</button>
-        </div>
-        <div className="nav-actions">
-          <button className="submit-btn">Submit</button>
         </div>
       </div>
     </nav>
@@ -87,22 +86,18 @@ const CodeEditor = () => {
       {/* Left: Problem Description */}
       <div className="probleminfo-container" style={{ width: '50%', overflowY: 'auto', padding: '1rem' }}>
         <div className="probleminfo-header">
-          <h2 className="probleminfo-title">2236. Build User Dashboard</h2>
+          <h2 className="probleminfo-title">{problemData.question_id}. {problemData.question}</h2>
           <div className="problem-meta">
-            <span className="difficulty-badge easy">Easy</span>
-            <span className="topic-tag">Frontend</span>
-            <span className="topic-tag">React</span>
+            <span className={`difficulty-badge ${problemData.diff}`}>{problemData.diff}</span>
+            {problemData.tags?.map((tag, index) => (
+              <span key={index} className="topic-tag">{tag}</span>
+            ))}
           </div>
         </div>
 
         <div className="probleminfo-content">
           <p className="probleminfo-description">
-            You are given the <span className="code-highlight">requirements</span> for a user dashboard that consists of exactly
-            <span className="code-highlight"> 3</span> main sections: the header, main content area, and sidebar.
-          </p>
-          <p className="probleminfo-description">
-            Return a <span className="code-highlight">React component</span> that implements the dashboard layout with proper
-            responsive design, <span className="code-highlight">state management</span>, and user interactions.
+            {problemData.description}
           </p>
 
           <div className="example-section">
@@ -176,12 +171,15 @@ const CodeEditor = () => {
                             <option value="rust">Rust</option>
                           </select>
                         </div>
+                        <div className = "file-title">
+                          Current File: <span>{currentFile}</span>
+                        </div>
                       </div>
                       <textarea
-                        value={code} readOnly
+                        onChange={(e) => setCode(e.target.value)}
+                        value={code}
                         className="code-textarea"
-                        defaultValue={`/**\n * Build User Dashboard Component\n * @param {Object} requirements - Dashboard requirements\n * @return {JSX.Element} Dashboard component\n */\n\nimport React, { useState, useEffect } from 'react';\n\nconst UserDashboard = ({ requirements }) => {\n  const [user, setUser] = useState(null);\n  const [theme, setTheme] = useState('dark');\n\n  useEffect(() => {\n    // Fetch user data\n    fetchUserData();\n  }, []);\n\n  const fetchUserData = async () => {\n    // Implementation here\n  };\n\n  return (\n    <div className='dashboard'>\n      {/* Your implementation here */}\n    </div>\n  );\n};\n\nexport default UserDashboard;`}
-                      />
+                        />
                     </div>
 
                     <div className="editor-footer">
