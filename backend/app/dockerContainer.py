@@ -7,9 +7,10 @@ import asyncio
 import shutil
 from docker import from_env
 
-client = from_env()
+
 
 async def run_user_code(folder_bytes: bytes):
+    client = from_env()
     job_id = str(uuid.uuid4())
     workdir = f"/tmp/{job_id}"
     os.makedirs(workdir, exist_ok=True)
