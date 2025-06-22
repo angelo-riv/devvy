@@ -7,19 +7,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# === ENV ===
+
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 BUCKET = os.getenv("SUPABASE_BUCKET")
 GEMINI_API_KEY = os.getenv("GEMINI_KEY")
 
-# === INIT CLIENTS ===
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash-001")
 
-# === UTILS ===
+
 def list_all_files_recursively(prefix):
+    """
+    Recursively lists all files in a Supabase storage bucket under the given prefix
+    """
     files = []
 
     def recurse(path):
@@ -36,7 +39,11 @@ def list_all_files_recursively(prefix):
     recurse(prefix)
     return files
 
+
 def read_folder_content(folder):
+    """
+    Reads all relevant files in a given folder in Supabase storage and returns their content as a single string
+    """
     files = list_all_files_recursively(folder)
     content = ""
     for file_path in files:
@@ -53,6 +60,9 @@ def read_folder_content(folder):
     return content.strip()
 
 def analyze_with_gemini(content):
+    """
+    Uses Google Gemini to analyze the provided code content and extract metadata for a coding question
+    """
     prompt = f"""
 You are an AI that reads code and generates metadata for a coding question.
 
@@ -101,7 +111,6 @@ def get_top_level_folders():
             folder_set.add(name)
     return sorted(folder_set)
 
-# === MAIN ===
 def generate_csv_output():
     output_rows = []
     folders = get_top_level_folders()
@@ -130,7 +139,7 @@ def generate_csv_output():
             "question_id": question_id,
             "question": analysis.get("question", "Untitled"),
             "description": analysis.get("description", ""),
-            "tags": json.dumps(analysis.get("tags", [])),  # store tags as JSON string
+            "tags": json.dumps(analysis.get("tags", [])),
             "storage_id": folder,
             "diff": analysis.get("diff", "medium")
         })
@@ -143,5 +152,5 @@ def generate_csv_output():
 
     print("\n✅ CSV file 'questions.csv' written successfully.")
 
-# === RUN ===
+
 generate_csv_output()

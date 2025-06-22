@@ -12,6 +12,8 @@ import os
 from app.models import User, Questions, Answers
 from .dockerContainer import run_user_code
 import base64
+from collections import defaultdict
+
 
 app = FastAPI()
 
@@ -167,37 +169,46 @@ async function fetchAndUnzipCode(questionId, username) {
 @app.post("/problem-code/{folder}")
 async def get_problem(folder: str):
     files, folders = get_all_items_recursively(folder)
-
+    filtered_files = [
+        path for path in files
+        if not path.lower().endswith("dockerfile") and "tests" not in path.lower()
+    ]
+    filtered_folders = [
+        path for path in folders
+        if not path.lower().endswith("dockerfile") and "tests" not in path.lower()
+    ]
     return {
         "files": [
             supabase.storage.from_(bucket).get_public_url(path)
-            for path in files
+            for path in filtered_files
         ],
-        "folders": folders
+        "folders": filtered_folders
     }
 
 def get_all_items_recursively(folder: str):
-    """
-    Helper function to recursively get all files and folders in a given folder in Supabase storage
-    """
     files = []
     folders = []
 
-    def recurse(current_folder):
-        items = supabase.storage.from_(bucket).list(current_folder)
-
-        if not items or not isinstance(items, list):
+    def recurse(current_folder: str):
+        response = supabase.storage.from_(bucket).list(current_folder)
+        if not response or not isinstance(response, list):
             return
 
-        for item in items:
-            name = item.get("name")
-            full_path = f"{current_folder}/{name}"
+        for item in response:
+            if not isinstance(item, dict):
+                continue
 
-            if "metadata" in item:  # This is a file
+            name = item.get("name")
+            if not name:
+                continue
+
+            full_path = f"{current_folder}/{name}" if current_folder else name
+
+            if item.get("metadata") is not None:  # File
                 files.append(full_path)
-            else:  # This is a subfolder
+            else:  # Folder
                 folders.append(full_path)
-                recurse(full_path)  # Recurse into the subfolder
+                recurse(full_path)
 
     recurse(folder)
     return files, folders
