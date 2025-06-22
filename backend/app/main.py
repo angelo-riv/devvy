@@ -107,11 +107,9 @@ def problem_description(question_id: int):
 
 @app.get("/getProblemId/{question_id}/getUser{username}")
 def get_problem_id(question_id: int, username: str):
-    answers = session.query(Answers).filter(Answers.username == username, Answers.question_id == question_id).first()
+    answer = session.query(Answers).filter(Answers.username == username, Answers.question_id == question_id).first()
     
-    answer = [x for x in answers]
-
-    if len(answer) == 0:
+    if not answer:
         return {
         "submission": False,
         "code": None,
@@ -121,14 +119,24 @@ def get_problem_id(question_id: int, username: str):
         "error": None
     }
 
-    encoded_code = base64.b64encode(answers.code).decode('utf-8')
+    if answer.code is None:
+        return {
+            "submission": True,
+            "code": None,
+            "total_cases": answer.total_cases,
+            "passed_cases": answer.passed_cases,
+            "passed": answer.passed,
+            "error": "No code submitted"
+        }
+
+    encoded_code = base64.b64encode(answer.code).decode('utf-8')
     
     return {
         "submission": True,
         "code": encoded_code,
-        "total_cases": answer[0].total_cases,
-        "passed_cases": answer[0].passed_cases,
-        "passed": answer[0].passed
+        "total_cases": answer.total_cases,
+        "passed_cases": answer.passed_cases,
+        "passed": answer.passed
     }
 
 '''
