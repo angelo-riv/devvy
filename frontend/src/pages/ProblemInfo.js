@@ -13,6 +13,7 @@ const CodeEditor = () => {
   const [code, setCode] = useState('');
   const question_id = window.location.pathname.split('/').pop(); 
   const root_folder = question_id;
+  const [currentFile, setCurrentFile] = useState('');
   
   useEffect(() => {
     async function fetchExplorer() {
@@ -28,6 +29,7 @@ const CodeEditor = () => {
   const handleFileClick = async (fileUrl) => {
     const res = await fetch(fileUrl);
     const text = await res.text();
+    setCurrentFile(fileUrl.split('/').pop().split('?')[0]);
     setCode(text);
   };
 
@@ -70,15 +72,12 @@ const CodeEditor = () => {
     <nav className="nav-container">
       <div className="nav-content">
         <div className="nav-brand">
-          <h1>Question Name</h1>
+          <h1>{problemData.question}</h1>
         </div>
         <div className="nav-tabs">
           <button className={`nav-tab${activeSection === 'code' ? ' active' : ''}`} onClick={() => setActiveSection('code')}>Code</button>
           <button className={`nav-tab${activeSection === 'solutions' ? ' active' : ''}`} onClick={() => setActiveSection('solutions')}>Solutions</button>
           <button className={`nav-tab${activeSection === 'submissions' ? ' active' : ''}`} onClick={() => setActiveSection('submissions')}>Submissions</button>
-        </div>
-        <div className="nav-actions">
-          <button className="submit-btn">Submit</button>
         </div>
       </div>
     </nav>
@@ -172,12 +171,15 @@ const CodeEditor = () => {
                             <option value="rust">Rust</option>
                           </select>
                         </div>
+                        <div className = "file-title">
+                          Current File: <span>{currentFile}</span>
+                        </div>
                       </div>
                       <textarea
-                        value={code} readOnly
+                        onChange={(e) => setCode(e.target.value)}
+                        value={code}
                         className="code-textarea"
-                        defaultValue={`/**\n * Build User Dashboard Component\n * @param {Object} requirements - Dashboard requirements\n * @return {JSX.Element} Dashboard component\n */\n\nimport React, { useState, useEffect } from 'react';\n\nconst UserDashboard = ({ requirements }) => {\n  const [user, setUser] = useState(null);\n  const [theme, setTheme] = useState('dark');\n\n  useEffect(() => {\n    // Fetch user data\n    fetchUserData();\n  }, []);\n\n  const fetchUserData = async () => {\n    // Implementation here\n  };\n\n  return (\n    <div className='dashboard'>\n      {/* Your implementation here */}\n    </div>\n  );\n};\n\nexport default UserDashboard;`}
-                      />
+                        />
                     </div>
 
                     <div className="editor-footer">
