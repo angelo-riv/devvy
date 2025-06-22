@@ -17,7 +17,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8000"],  # Or specify a list of allowed origins
+    allow_origins=["*"],  # Or specify a list of allowed origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -62,6 +62,22 @@ def get_problems():
     questions = session.query(Questions).all()
     return {"question_id": [question.question_id for question in questions], "description": [question.description for question in questions]}
 
+@app.post("/getUserData/{username}")
+def get_user_data(username: str):
+    user = session.query(User).filter(User.username == username).first()
+    
+    if not user:
+        return {"error": "User not found"}
+
+    solved_questions = user.solved_questions if user.solved_questions else []
+
+    return {
+        "username": user.username,
+        "email": user.email,
+        "solved_questions": solved_questions,
+        "user_id": user.user_id
+    }
+
 @app.post("/getProblemDescription/{question_id}")
 def problem_description(question_id: int):
     question = session.query(Questions).filter(Questions.question_id == question_id).first()
@@ -71,6 +87,7 @@ def problem_description(question_id: int):
 
     return {
         "question_id": question.question_id,
+        "question": question.question,
         "description": question.description
     }
 
