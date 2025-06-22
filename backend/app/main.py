@@ -137,22 +137,41 @@ async function fetchAndUnzipCode(questionId, username) {
 
 @app.post("/problem-code/{folder}")
 async def get_problem(folder: str):
-    """
-    Gets all files (regardless of extension) in the specified folder from Supabase storage.
-    """
-    response = supabase.storage.from_(bucket).list(folder)
+    files, folders = get_all_items_recursively(folder)
 
-    # Handle folder not found or empty
-    if not response or not isinstance(response, list):
-        return "Folder not found"
-
-    # Return public URLs for all files in the folder (excluding subfolders)
-    return {"files":[
-        supabase.storage.from_(bucket).get_public_url(f"{folder}/{file['name']}")
-        for file in response
-        if "name" in file
-        ]
+    return {
+        "files": [
+            supabase.storage.from_(bucket).get_public_url(path)
+            for path in files
+        ],
+        "folders": folders
     }
+
+def get_all_items_recursively(folder: str):
+    """
+    Helper function to recursively get all files and folders in a given folder in Supabase storage
+    """
+    files = []
+    folders = []
+
+    def recurse(current_folder):
+        items = supabase.storage.from_(bucket).list(current_folder)
+
+        if not items or not isinstance(items, list):
+            return
+
+        for item in items:
+            name = item.get("name")
+            full_path = f"{current_folder}/{name}"
+
+            if "metadata" in item:  # This is a file
+                files.append(full_path)
+            else:  # This is a subfolder
+                folders.append(full_path)
+                recurse(full_path)  # Recurse into the subfolder
+
+    recurse(folder)
+    return files, folders
 
 
 @app.post("/submit")
