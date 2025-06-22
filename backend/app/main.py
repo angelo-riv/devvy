@@ -60,7 +60,7 @@ def count_questions():
 @app.get("/getQuestionsDescription")
 def get_problems():
     questions = session.query(Questions).all()
-    return {"question_id": [question.question_id for question in questions], "description": [question.description for question in questions]}
+    return {"tags": [question.tags for question in questions], "question_id": [question.question_id for question in questions], "question": [question.question for question in questions], "description": [question.description for question in questions],"diff": [question.diff for question in questions]}
 
 @app.post("/getUserData/{username}")
 def get_user_data(username: str):

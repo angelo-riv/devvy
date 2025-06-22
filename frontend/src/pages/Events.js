@@ -4,51 +4,51 @@ const Events = () => {
   const upcomingEvents = [
     {
       id: 1,
-      title: "Weekly Algorithm Contest",
+      title: "Best MERN Stack Developer Contest",
       date: "2024-06-22",
       time: "3:00 PM EST",
       duration: "2 hours",
       participants: 1247,
       type: "Contest",
-      description: "Compete with developers worldwide in this weekly algorithmic challenge. Prizes for top performers!",
-      difficulty: "All Levels",
-      tags: ["Algorithms", "Contest", "Weekly"]
+      description: "Compete with developers worldwide to build the best MERN stack application. Showcase your skills and creativity.",
+      difficulty: "",
+      tags: ["Monthly", "Contest", "MERN", "MongoDB", "Express", "React", "Node.js"]
     },
     {
       id: 2,
-      title: "System Design Workshop",
+      title: "AWS Solution Architecture Challenge",
       date: "2024-06-24",
       time: "7:00 PM EST", 
       duration: "1.5 hours",
       participants: 432,
-      type: "Workshop",
-      description: "Learn how to design scalable systems from industry experts. Interactive session with Q&A.",
-      difficulty: "Intermediate",
-      tags: ["System Design", "Architecture", "Workshop"]
+      type: "Company Event",
+      description: "Take on an AWS architecture challenge made by Amazon Engineering Managers. Design scalable and efficient solutions using AWS services.",
+      difficulty: "Hosted By Amazon",
+      tags: ["System Design", "Architecture", "AWS", "Cloud Computing"]
     },
     {
       id: 3,
-      title: "Frontend Interview Prep",
+      title: "Best Website built with Three.js",
       date: "2024-06-25",
       time: "6:00 PM EST",
       duration: "2 hours", 
       participants: 867,
-      type: "Study Group",
-      description: "Practice common frontend interview questions with peers. React, JavaScript, and CSS focus.",
-      difficulty: "Beginner",
-      tags: ["Frontend", "Interview", "JavaScript", "React"]
+      type: "Contest",
+      description: "Join the contest to create the most innovative and visually stunning website using Three.js. Showcase your creativity and technical skills.",
+      difficulty: "",
+      tags: ["Frontend", "Three.js", "Blender", "React"]
     },
     {
       id: 4,
-      title: "Data Structures Deep Dive",
+      title: "Kafka and Apache Flink Message Processing Event",
       date: "2024-06-26",
       time: "4:00 PM EST",
       duration: "3 hours",
       participants: 234,
-      type: "Workshop",
-      description: "Comprehensive exploration of advanced data structures and their real-world applications.",
-      difficulty: "Advanced",
-      tags: ["Data Structures", "Advanced", "Theory"]
+      type: "Company Event",
+      description: "Take part in competing to build a real-time message processing application using Kafka and Apache Flink.",
+      difficulty: "Hosted by Netflix",
+      tags: ["Limited Time", "Kafka", "Apache Flink"]
     }
   ];
 
@@ -85,7 +85,6 @@ const Events = () => {
 
         <div className="events-subheader">
           <h2>Upcoming Events</h2>
-          <button className="event-btn blue">Create Event</button>
         </div>
 
         <div className="event-list">
@@ -123,7 +122,7 @@ const Events = () => {
           <h2>Featured Event</h2>
           <div className="featured-card">
             <div className="featured-left">
-              <h3>CodeConnect Annual Championship</h3>
+              <h3>Devvy Annual Championship</h3>
               <p>
                 Join the biggest coding competition of the year! Compete for the ultimate title and amazing prizes.
                 Three rounds of increasingly challenging problems await.
