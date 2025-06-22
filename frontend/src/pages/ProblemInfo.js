@@ -6,7 +6,7 @@ import Submissions from '../components/Submissions';
 import JSZip from "jszip";
 
 const CodeEditor = () => {
-  const [activeTab, setActiveTab] = useState('testcase');
+  const [activeTab, setActiveTab] = useState('result');
   const [activeSection, setActiveSection] = useState('code');
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [problemData, setProblemData] = useState([]);
@@ -95,6 +95,10 @@ async function handleSubmit() {
   }, [question_id]);
 
   console.log('explorerData:', explorerData);
+
+  const handleSubmit = () => {    
+    console.log("hi")
+  };
 
   return (
   <div className="probleminfo-page">
@@ -249,8 +253,7 @@ async function handleSubmit() {
                       </div>
 
                       <div className="editor-actions">
-                        <button className="btn-outline">Run</button>
-                        <button className="btn-primary">Submit</button>
+                        <button className="btn-primary" onClick = {()=> handleSubmit()}>Submit</button>
                       </div>
                     </div>
                   </>
