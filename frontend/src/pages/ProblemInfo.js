@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import JSZip from 'jszip';
 import axios from 'axios';
 import FileExplorer from '../components/FileExplorer';
 import Solutions from '../components/Solutions';
@@ -9,12 +10,13 @@ const CodeEditor = () => {
   const [activeSection, setActiveSection] = useState('code');
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [problemData, setProblemData] = useState([]);
+  const [result,setResult] = useState([]);
   const [explorerData, setExplorerData] = useState({ files: [], folders: [] });
   const [code, setCode] = useState('');
   const question_id = window.location.pathname.split('/').pop(); 
   const root_folder = question_id;
   const [currentFile, setCurrentFile] = useState('');
-  
+
   useEffect(() => {
     async function fetchExplorer() {
       const res = await fetch(`http://127.0.0.1:8000/problem-code/${root_folder}`, {
@@ -67,9 +69,43 @@ const CodeEditor = () => {
 
   console.log('explorerData:', explorerData);
 
-  const handleSubmit = () => {    
+  const handleSubmit = async () => {  
+  try {
+    const username = "testuser";
+    const res = await axios.get(`http://127.0.0.1:8000/getProblemId/${question_id}/getUser${username}`);
+    const data = res.data;
+    setResult(data);
+    console.log("hi",result);
+    if (!data.submission) {
+      console.log("No submission found");
+      return;
+    }
+
+    if (!data.code) {
+      console.log("No code submitted");
+      return;
+    }
+
+    const base64String = data.code;
+    const binaryString = atob(base64String);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    const jszip = new JSZip();
+    const zip = await jszip.loadAsync(bytes);
+    for (const filename of Object.keys(zip.files)) {
+      const content = await zip.files[filename].async("string");
+      console.log(`File: ${filename}`, content);
+    }
+    setActiveTab("result");
     console.log("hi")
-  };
+  } catch (error) {
+    console.error("error", error);
+  }
+};
 
   return (
   <div className="probleminfo-page">
@@ -204,21 +240,34 @@ const CodeEditor = () => {
                               <span>Case 2</span>
                               <button className="add-case">+</button>
                             </div>
-                            <div className="testcase-input">
-                              <label>requirements =</label>
-                              <input type="text" defaultValue='["responsive", "dark-theme", "user-profile"]' className="testcase-field" />
-                            </div>
                           </div>
                         )}
                         {activeTab === 'result' && (
                           <div className="result-section">
-                            <div className="result-status success">
-                              <span>✓ All test cases passed</span>
+                            {result.passed === false && (
+                              <>
+                              <div className="result-status failed">
+                              <span>{result.error}</span>
                             </div>
                             <div className="result-details">
+                              <p>Test Cases Passed: {result.passed_cases} of {result.total_cases}</p>
                               <p>Runtime: 45ms</p>
                               <p>Memory: 2.1MB</p>
                             </div>
+                            </>
+                            )}
+                            {result.passed === true && (
+                              <>
+                              <div className="result-status success">
+                              <span>{result.error ?? "All test cases Passed!"}</span>
+                            </div>
+                            <div className="result-details">
+                              <p>Test Cases Passed: {result.passed_cases} of {result.total_cases}</p>
+                              <p>Runtime: 45ms</p>
+                              <p>Memory: 2.1MB</p>
+                            </div>
+                            </>
+                            )}
                           </div>
                         )}
                       </div>
