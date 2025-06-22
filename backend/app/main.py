@@ -177,20 +177,13 @@ async function fetchAndUnzipCode(questionId, username) {
 @app.post("/problem-code/{folder}")
 async def get_problem(folder: str):
     files, folders = get_all_items_recursively(folder)
-    filtered_files = [
-        path for path in files
-        if not path.lower().endswith("dockerfile") and "tests" not in path.lower()
-    ]
-    filtered_folders = [
-        path for path in folders
-        if not path.lower().endswith("dockerfile") and "tests" not in path.lower()
-    ]
+
     return {
         "files": [
             supabase.storage.from_(bucket).get_public_url(path)
-            for path in filtered_files
+            for path in files
         ],
-        "folders": filtered_folders
+        "folders": folders
     }
 
 def get_all_items_recursively(folder: str):

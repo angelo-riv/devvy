@@ -1,7 +1,7 @@
 import { Calendar, User, ThumbsUp, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const ProblemCard = ({ onClick, title, difficulty, author, timeAgo, likes, comments, tags, description, index }) => {
+const ProblemCard = ({ onClick, problem_id, title, difficulty, author, timeAgo, likes, comments, tags, description, index }) => {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'easy': return 'easy';
@@ -15,7 +15,7 @@ const ProblemCard = ({ onClick, title, difficulty, author, timeAgo, likes, comme
     <div className="problem-card" onClick={onClick}>
       <div className="problem-header">
         <div className="problem-info">
-          <h3 className="problem-title">{title}</h3>
+          <h3 className="problem-title">{problem_id}. {title}</h3>
           <div className="problem-meta">
             <div className="meta-item">
               <User size={14} />

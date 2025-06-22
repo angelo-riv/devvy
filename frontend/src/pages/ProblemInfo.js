@@ -12,7 +12,7 @@ const CodeEditor = () => {
   const [problemData, setProblemData] = useState([]);
   const [result,setResult] = useState([]);
   const [explorerData, setExplorerData] = useState({ files: [], folders: [] });
-  const [code, setCode] = useState('');
+  const [filesContent, setFilesContent] = useState({});
   const question_id = window.location.pathname.split('/').pop(); 
   const root_folder = question_id;
   const [currentFile, setCurrentFile] = useState('');
@@ -29,10 +29,22 @@ const CodeEditor = () => {
   }, []);
 
   const handleFileClick = async (fileUrl) => {
+    const fileName = fileUrl.split('/').pop().split('?')[0];
+
+    if (filesContent[fileName]) {
+      setCurrentFile(fileName); // Already in state, just set current file
+      return;
+    }
+
     const res = await fetch(fileUrl);
     const text = await res.text();
-    setCurrentFile(fileUrl.split('/').pop().split('?')[0]);
-    setCode(text);
+
+    setFilesContent((prev) => ({
+      ...prev,
+      [fileName]: text
+    }));
+
+    setCurrentFile(fileName);
   };
 
   useEffect(() => {
@@ -77,7 +89,9 @@ const handleSubmit = async () => {
 
 
   // Add the code to the ZIP file as main.py
-  zip.file("main.py", code); // assuming `code` is your state variable
+  for (const [filename, content] of Object.entries(filesContent)) {
+    zip.file(filename, content);
+  }
 
   // Generate the zip blob
   const zipBlob = await zip.generateAsync({ type: "blob" });
@@ -91,6 +105,7 @@ const handleSubmit = async () => {
   formData.append("question_id", parseInt(question_id, 10));
 
   // Send to backend
+  try{
   const res = await fetch("http://127.0.0.1:8000/submit", {
     method: "POST",
     body: formData,
@@ -98,8 +113,12 @@ const handleSubmit = async () => {
 
   const result = await res.json();
   console.log(result);
+  setResult(result);
   console.log(result.hasError)
   setActiveTab("result")
+  } catch (error) {
+    console.error("Submission Error")
+  }
 
 };
 
@@ -212,8 +231,13 @@ const handleSubmit = async () => {
                         </div>
                       </div>
                       <textarea
-                        onChange={(e) => setCode(e.target.value)}
-                        value={code}
+                        onChange={(e) =>
+                          setFilesContent((prev) => ({
+                            ...prev,
+                            [currentFile]: e.target.value,
+                          }))
+                        }
+                        value={filesContent[currentFile] || ''}
                         className="code-textarea"
                         />
                     </div>
