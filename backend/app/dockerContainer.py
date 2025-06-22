@@ -7,15 +7,18 @@ import asyncio
 import shutil
 from docker import from_env
 
-async def run_user_code(folder_bytes: bytes):
-    client = from_env()
-    job_id = str(uuid.uuid4())
-    workdir = f"/tmp/{job_id}"
-    os.makedirs(workdir, exist_ok=True)
+client = from_env()
 
+async def run_user_code(folder_bytes: bytes):
+    
+    job_id = str(uuid.uuid4())
+    workdir = f"./tmp/{job_id}"
+    os.makedirs(workdir, exist_ok=True)
+    print(len(folder_bytes), "bytes received")
     # Step 1: Extract zip contents into temp directory
     try:
         with zipfile.ZipFile(io.BytesIO(folder_bytes)) as zip_ref:
+            print("Zip file contains:", zip_ref.namelist())
             zip_ref.extractall(workdir)
     except Exception as e:
         shutil.rmtree(workdir, ignore_errors=True)
@@ -47,7 +50,7 @@ async def run_user_code(folder_bytes: bytes):
         # Step 4: Run container
         def run_container():
 
-            timeout_sec=2 
+            timeout_sec=1
 
             container = client.containers.create(
                 image=image_tag,
@@ -81,3 +84,16 @@ async def run_user_code(folder_bytes: bytes):
 
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
+
+'''
+'''
+if __name__ == "__main__":
+    import asyncio
+
+
+    with open("backend\\app\\tradingBot.zip", "rb") as f:
+        zip_bytes = f.read()
+
+    result = asyncio.run(run_user_code(zip_bytes))
+    print(result)
+    ''''''

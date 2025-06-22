@@ -225,6 +225,8 @@ async def submit_answer(
     print("question_id:", question_id, type(question_id))
     zip_bytes = await code.read()
 
+    print("zip_bytes length:", len(zip_bytes))
+
     answer = session.query(Answers).filter(
         Answers.username == username,
         Answers.question_id == question_id
@@ -232,9 +234,9 @@ async def submit_answer(
 
     results = await run_user_code(zip_bytes)
 
-    print(results[1])
+    print(results)
 
-    if results[0] == 0: 
+    if results[0]["StatusCode"] == 0: 
         passed_cases = results[1].count("True")
         total_cases = passed_cases + results[1].count("False")
         passed = passed_cases == total_cases

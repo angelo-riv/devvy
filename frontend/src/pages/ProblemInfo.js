@@ -18,15 +18,33 @@ const CodeEditor = () => {
   const [currentFile, setCurrentFile] = useState('');
   
   useEffect(() => {
-    async function fetchExplorer() {
-      const res = await fetch(`http://127.0.0.1:8000/problem-code/${root_folder}`, {
-        method: 'POST'
-      });
-      const data = await res.json();
-      setExplorerData(data);
+  async function fetchExplorer() {
+    const res = await fetch(`http://127.0.0.1:8000/problem-code/${root_folder}`, {
+      method: 'POST'
+    });
+    const data = await res.json();  
+    setExplorerData(data);
+
+    // Fetch and populate all file contents immediately
+    const fileContents = {};
+    for (const fileUrl of data.files) {
+      const fileName = fileUrl.split('/').pop().split('?')[0];
+      const response = await fetch(fileUrl);
+      const text = await response.text();
+      fileContents[fileName] = text;
     }
-    fetchExplorer();
-  }, []);
+
+    setFilesContent(fileContents);
+
+    // Optionally set the first file as the current file
+    if (data.files.length > 0) {
+      const firstFileName = data.files[0].split('/').pop().split('?')[0];
+      setCurrentFile(firstFileName);
+    }
+  }
+
+  fetchExplorer();
+}, []);
 
   const handleFileClick = async (fileUrl) => {
     const fileName = fileUrl.split('/').pop().split('?')[0];
@@ -95,7 +113,6 @@ const handleSubmit = async () => {
 
   // Generate the zip blob
   const zipBlob = await zip.generateAsync({ type: "blob" });
-
   // Prepare form data for the backend
   const formData = new FormData();
   console.log("question_id raw:", question_id, typeof question_id);
@@ -106,10 +123,16 @@ const handleSubmit = async () => {
 
   // Send to backend
   try{
+
+  for (let pair of formData.entries()) {
+  console.log("hhhh",pair[0]+ ':', pair[1]);
+}
   const res = await fetch("http://127.0.0.1:8000/submit", {
     method: "POST",
     body: formData,
   });
+
+
 
   const result = await res.json();
   console.log(result);
@@ -155,45 +178,8 @@ const handleSubmit = async () => {
             {problemData.description}
           </p>
 
-          <div className="example-section">
-            <h3 className="example-title">Example 1:</h3>
-            <div className="example-content">
-              <div className="example-input">
-                <strong>Input:</strong> requirements = ["responsive", "dark-theme", "user-profile"]
-              </div>
-              <div className="example-output">
-                <strong>Output:</strong> Dashboard component with responsive layout
-              </div>
-              <div className="example-explanation">
-                <strong>Explanation:</strong> The dashboard should include a responsive header with navigation,
-                a main content area displaying user information, and a collapsible sidebar with menu items.
-                The component should handle dark theme switching and display user profile data.
-              </div>
-            </div>
-          </div>
-
-          <div className="example-section">
-            <h3 className="example-title">Example 2:</h3>
-            <div className="example-content">
-              <div className="example-input">
-                <strong>Input:</strong> requirements = ["analytics", "notifications", "settings"]
-              </div>
-              <div className="example-output">
-                <strong>Output:</strong> Enhanced dashboard with additional features
-              </div>
-            </div>
-          </div>
-
-          <div className="constraints-section">
-            <h3 className="constraints-title">Constraints:</h3>
-            <ul className="constraints-list">
-              <li>Component must be responsive (mobile-first approach)</li>
-              <li>Use modern React patterns (hooks, functional components)</li>
-              <li>Implement proper error handling</li>
-              <li>Follow accessibility best practices</li>
-              <li>Performance optimized (lazy loading, memoization)</li>
-            </ul>
-          </div>
+          
+          
         </div>
       </div>
 
@@ -244,9 +230,6 @@ const handleSubmit = async () => {
 
                     <div className="editor-footer">
                       <div className="editor-tabs">
-                        <button className={`editor-tab ${activeTab === 'testcase' ? 'lactive' : ''}`} onClick={() => setActiveTab('testcase')}>
-                          ✓ Testcase
-                        </button>
                         <button className={`editor-tab ${activeTab === 'result' ? 'lactive' : ''}`} onClick={() => setActiveTab('result')}>
                           📋 Test Result
                         </button>
@@ -271,8 +254,6 @@ const handleSubmit = async () => {
                             </div>
                             <div className="result-details">
                               <p>Test Cases Passed: {result.passed_cases} of {result.total_cases} </p>
-                              <p>Runtime: 45ms</p>
-                              <p>Memory: 2.1MB</p>
                             </div>
                             </>
                             )}
