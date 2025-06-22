@@ -1,8 +1,16 @@
 // Home.jsx
-import React from 'react';
+import React, {useEffect} from 'react';
 import ProblemCard from '../components/ProblemCard';
 
 const Home = () => {
+  const [problemCount, setProblemCount] = React.useState(null);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/questions/count")
+      .then(res => res.json())
+      .then(data => setProblemCount(data.count))
+      .catch(() => setProblemCount("N/A"));
+  }, []);
   const recentProblems = [
     {
       title: "Two Sum with Constraints",
@@ -50,16 +58,16 @@ const Home = () => {
 
         <div className="stats-grid">
           <div className="stat-card blue">
-            <div className="stat-number-blue" >1,247</div>
-            <div className="home-stat-label">Active Problems</div>
+            <div className="stat-number-blue" >{problemCount !== null ? problemCount : "..."}</div>
+            <div className="stat-label">Active Problems</div>
           </div>
           <div className="stat-card green">
             <div className="stat-number-green">5,892</div>
             <div className="home-stat-label">Solutions Shared</div>
           </div>
           <div className="stat-card purple">
-            <div className="stat-number-purple">12K+</div>
-            <div className="home-stat-label">Active Developers</div>
+            <div className="stat-number-purple">123</div>
+            <div className="stat-label">Active Developers</div>
           </div>
         </div>
 

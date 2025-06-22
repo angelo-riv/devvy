@@ -52,6 +52,11 @@ def get_problems():
     questions = session.query(Questions).all()
     return {"question_id": [question.question_id for question in questions], "question": [get_problem(question.storage_id) for question in questions]}
 
+@app.get("/questions/count")
+def count_questions():
+    count = session.query(Questions).count()
+    return {"count": count}
+
 @app.get("/getQuestionsDescription")
 def get_problems():
     questions = session.query(Questions).all()

@@ -19,7 +19,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 session = SessionLocal()
 #Create branch
-
+print(DATABASE_URL)
 # Test the connection
 try:
     with engine.connect() as connection:
