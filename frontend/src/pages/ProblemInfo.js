@@ -3,6 +3,7 @@ import axios from 'axios';
 import FileExplorer from '../components/FileExplorer';
 import Solutions from '../components/Solutions';
 import Submissions from '../components/Submissions';
+import JSZip from "jszip";
 
 const CodeEditor = () => {
   const [activeTab, setActiveTab] = useState('testcase');
@@ -15,6 +16,34 @@ const CodeEditor = () => {
   const root_folder = question_id;
   const [currentFile, setCurrentFile] = useState('');
   
+  
+
+async function handleSubmit() {
+  const zip = new JSZip();
+
+  // Add the code to the ZIP file as main.py
+  zip.file("main.py", code); // assuming `code` is your state variable
+
+  // Generate the zip blob
+  const zipBlob = await zip.generateAsync({ type: "blob" });
+
+  // Prepare form data for the backend
+  const formData = new FormData();
+  formData.append("code", new File([zipBlob], "code.zip")); // name matches FastAPI's `code: UploadFile`
+  formData.append("username", username);
+  formData.append("question_id", questionId);
+
+  // Send to backend
+  const res = await fetch("/submit", {
+    method: "POST",
+    body: formData,
+  });
+
+  const result = await res.json();
+  console.log(result);
+}
+
+
   useEffect(() => {
     async function fetchExplorer() {
       const res = await fetch(`http://127.0.0.1:8000/problem-code/${root_folder}`, {
