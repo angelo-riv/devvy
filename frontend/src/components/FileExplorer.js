@@ -40,15 +40,19 @@ const FileExplorer = ({ files = [], folders = [], onFileClick }) => (
           📁 {folder}
         </li>
       ))}
-      {files.map((fileUrl) => {
-        // Extract the file name from the URL
-        const fileName = fileUrl.split('/').pop().split('?')[0];
-        return (
-          <li key={fileUrl} className="file" onClick={() => onFileClick(fileUrl)}>
-            📄 {fileName}
-          </li>
-        );
-      })}
+      {files
+        .filter(fileUrl => {
+          const fileName = fileUrl.split('/').pop().split('?')[0];
+          return !fileName.toLowerCase().endsWith('dockerfile');
+        })
+        .map((fileUrl) => {
+          const fileName = fileUrl.split('/').pop().split('?')[0];
+          return (
+            <li key={fileUrl} className="file" onClick={() => onFileClick(fileUrl)}>
+              📄 {fileName}
+            </li>
+          );
+        })}
     </ul>
   </div>
 );
