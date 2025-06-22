@@ -206,7 +206,8 @@ def get_all_items_recursively(folder: str):
             full_path = f"{current_folder}/{name}" if current_folder else name
 
             if item.get("metadata") is not None:  # File
-                files.append(full_path)
+                if not name.lower().startswith("dockerfile"):
+                    files.append(full_path)
             else:  # Folder
                 folders.append(full_path)
                 recurse(full_path)
