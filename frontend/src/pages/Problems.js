@@ -1,5 +1,5 @@
 // Problems.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { Search } from 'lucide-react';
 import ProblemCard from '../components/ProblemCard';
 
@@ -7,59 +7,23 @@ const Problems = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [selectedTag, setSelectedTag] = useState('All');
+  const [problems, setProblems] = useState([]);
 
-  const problems = [
-    {
-      title: "Two Sum with Constraints",
-      difficulty: "Medium",
-      author: "alex_dev",
-      timeAgo: "2 hours ago",
-      likes: 24,
-      comments: 8,
-      tags: ["Array", "Hash Table", "Dynamic Programming"],
-      description: "Given an array of integers and a target sum, find two numbers that add up to the target with additional constraints on time complexity."
-    },
-    {
-      title: "Binary Tree Path Traversal",
-      difficulty: "Hard",
-      author: "sarah_codes",
-      timeAgo: "4 hours ago",
-      likes: 18,
-      comments: 12,
-      tags: ["Tree", "Recursion", "DFS"],
-      description: "Implement a function to find all root-to-leaf paths in a binary tree that sum to a given target value."
-    },
-    {
-      title: "String Palindrome Checker",
-      difficulty: "Easy",
-      author: "mike_algorithms",
-      timeAgo: "6 hours ago",
-      likes: 31,
-      comments: 5,
-      tags: ["String", "Two Pointers"],
-      description: "Create an efficient algorithm to check if a given string is a palindrome, ignoring spaces and case sensitivity."
-    },
-    {
-      title: "Graph Shortest Path",
-      difficulty: "Hard",
-      author: "emma_graphs",
-      timeAgo: "1 day ago",
-      likes: 42,
-      comments: 15,
-      tags: ["Graph", "BFS", "Dijkstra"],
-      description: "Implement Dijkstra's algorithm to find the shortest path between two nodes in a weighted graph."
-    },
-    {
-      title: "Array Rotation Challenge",
-      difficulty: "Easy",
-      author: "john_array",
-      timeAgo: "2 days ago",
-      likes: 28,
-      comments: 7,
-      tags: ["Array", "Rotation"],
-      description: "Rotate an array to the right by k steps, where k is non-negative. Solve it in-place with O(1) extra space."
-    }
-  ];
+  // ✅ Connect to FastAPI and extract `question` array
+  useEffect(() => {
+    const fetchProblems = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/getQuestions");
+        const data = await res.json();
+        console.log("Fetched data:", data); // ✅ Debug check
+        setProblems(data.question); // ✅ Pull just the question list
+      } catch (err) {
+        console.error("Failed to load problems:", err);
+      }
+    };
+
+    fetchProblems();
+  }, []);
 
   const difficulties = ['All', 'Easy', 'Medium', 'Hard'];
   const tags = ['All', 'Array', 'String', 'Tree', 'Graph', 'Hash Table', 'Dynamic Programming', 'Two Pointers', 'BFS', 'DFS', 'Recursion'];
