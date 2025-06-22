@@ -1,6 +1,7 @@
 import { Calendar, User, ThumbsUp, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const ProblemCard = ({ title, difficulty, author, timeAgo, likes, comments, tags, description }) => {
+const ProblemCard = ({ title, difficulty, author, timeAgo, likes, comments, tags, description, index }) => {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'Easy': return 'easy';
