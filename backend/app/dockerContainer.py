@@ -7,11 +7,6 @@ import asyncio
 import shutil
 from docker import from_env
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 8e1ef7fcb1931b2d6995673ea791d7d7a46bdd0d
-
 async def run_user_code(folder_bytes: bytes):
     client = from_env()
     job_id = str(uuid.uuid4())

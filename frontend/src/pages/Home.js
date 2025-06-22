@@ -51,15 +51,15 @@ const Home = () => {
         <div className="stats-grid">
           <div className="stat-card blue">
             <div className="stat-number-blue" >1,247</div>
-            <div className="stat-label">Active Problems</div>
+            <div className="home-stat-label">Active Problems</div>
           </div>
           <div className="stat-card green">
             <div className="stat-number-green">5,892</div>
-            <div className="stat-label">Solutions Shared</div>
+            <div className="home-stat-label">Solutions Shared</div>
           </div>
           <div className="stat-card purple">
             <div className="stat-number-purple">12K+</div>
-            <div className="stat-label">Active Developers</div>
+            <div className="home-stat-label">Active Developers</div>
           </div>
         </div>
 

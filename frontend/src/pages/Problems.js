@@ -80,7 +80,7 @@ const Problems = () => {
 
           <div className="problems-filter-box">
             <div className="filter-grid">
-              <div className="search-bar">
+              <div className="problems-search-bar">
                 <Search className="search-icon" size={20} />
                 <input
                   type="text"

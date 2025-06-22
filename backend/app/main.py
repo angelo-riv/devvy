@@ -10,18 +10,14 @@ from supabase import create_client
 from dotenv import load_dotenv
 import os
 from app.models import User, Questions, Answers
-<<<<<<< HEAD
-from app.dockerContainer import run_user_code
-=======
 from .dockerContainer import run_user_code
->>>>>>> 8e1ef7fcb1931b2d6995673ea791d7d7a46bdd0d
 import base64
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Or specify a list of allowed origins
+    allow_origins=["http://127.0.0.1:8000"],  # Or specify a list of allowed origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
