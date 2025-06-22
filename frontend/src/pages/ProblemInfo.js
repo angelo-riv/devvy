@@ -8,6 +8,7 @@ const CodeEditor = () => {
   const [activeTab, setActiveTab] = useState('testcase');
   const [activeSection, setActiveSection] = useState('code');
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+  const [problemData, setProblemData] = useState([]);
   const question_id = window.location.pathname.split('/').pop(); 
 
   useEffect(() => {
@@ -32,10 +33,9 @@ const CodeEditor = () => {
   useEffect(() => {
     const getProblemData = async () => {
       try{
-        console.log(question_id);
         const response = await axios.post(`http://127.0.0.1:8000/getProblemDescription/${question_id}`);
         console.log(response);
-        const problemData = response.data;
+        setProblemData(response.data);
       } catch(error){
         console.error("Error fetching problem data:", error);
       }
@@ -69,23 +69,18 @@ const CodeEditor = () => {
     <div className = "probleminfo-containers">
       <div className="probleminfo-container">
         <div className="probleminfo-header">
-          <h2 className="probleminfo-title">2236. Build User Dashboard</h2>
+          <h2 className="probleminfo-title">{problemData.question_id}. {problemData.question}</h2>
           <div className="problem-meta">
-            <span className="difficulty-badge easy">Easy</span>
-            <span className="topic-tag">Frontend</span>
-            <span className="topic-tag">React</span>
+            <span className={`difficulty-badge ${problemData.diff}`}>{problemData.diff}</span>
+            {problemData.tags?.map((tag, index) => (
+              <span key={index} className="topic-tag">{tag}</span>
+            ))}
           </div>
         </div>
         
         <div className="probleminfo-content">
           <p className="probleminfo-description">
-            You are given the <span className="code-highlight">requirements</span> for a user dashboard that consists of exactly 
-            <span className="code-highlight"> 3</span> main sections: the header, main content area, and sidebar.
-          </p>
-          
-          <p className="probleminfo-description">
-            Return a <span className="code-highlight">React component</span> that implements the dashboard layout with proper 
-            responsive design, <span className="code-highlight">state management</span>, and user interactions.
+            {problemData.description}
           </p>
           
           <div className="example-section">

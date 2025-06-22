@@ -500,6 +500,7 @@ body {
   background-color: #1e293b;
   border: 1px solid #334155;
   border-radius: 1rem;
+  cursor: pointer;
   padding: 1.5rem;
   transition: all 0.2s ease;
 }

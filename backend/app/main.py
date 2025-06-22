@@ -57,6 +57,16 @@ def count_questions():
     count = session.query(Questions).count()
     return {"count": count}
 
+@app.get("/answercount")
+def count_solutions():
+    count = session.query(Answers).count()
+    return {"count": count}
+
+@app.get("/usercount")
+def count_users():
+    count = session.query(User).count()
+    return {"count": count}
+
 @app.get("/getQuestionsDescription")
 def get_problems():
     questions = session.query(Questions).all()
@@ -88,7 +98,9 @@ def problem_description(question_id: int):
     return {
         "question_id": question.question_id,
         "question": question.question,
-        "description": question.description
+        "description": question.description,
+        "diff": question.diff,
+        "tags": question.tags
     }
 
 @app.get("/getProblemId/{question_id}/getUser{username}")
