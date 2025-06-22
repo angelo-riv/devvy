@@ -1,5 +1,6 @@
 // Profile.js
 import { Calendar, Code, Trophy, Users, GitBranch, Star, MessageCircle } from 'lucide-react';
+import { useEffect } from 'react';
 
 const Profile = () => {
   const userStats = [
@@ -33,6 +34,17 @@ const Profile = () => {
       default: return 'gray';
     }
   };
+
+  useEffect(()=> {
+    const getUserData = async () => {
+      try{
+        const response = await axios.post(`http://127.0.0.1:8000/getProblemDescription/${question_id}`);
+      } catch (error) {
+        console.error("Error loading profile data:", error);
+      }
+    }
+    getUserData();
+  }, []);
 
   return (
     <div className="profile-container">

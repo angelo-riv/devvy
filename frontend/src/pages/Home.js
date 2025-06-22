@@ -63,7 +63,7 @@ const Home = () => {
           </div>
           <div className="stat-card green">
             <div className="stat-number-green">5,892</div>
-            <div className="stat-label">Solutions Shared</div>
+            <div className="home-stat-label">Solutions Shared</div>
           </div>
           <div className="stat-card purple">
             <div className="stat-number-purple">123</div>

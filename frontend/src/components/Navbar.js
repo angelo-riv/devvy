@@ -11,7 +11,7 @@ const Navbar = () => {
   return (
     <div className={`navbar ${darkMode ? 'dark' : 'light'}`}>
       <div className="navbar-left">
-        <img src="/logo.png" alt="Logo" className="nav-logo" />
+        <img src="/c_oding_ss_7-Photoroom.jpg" alt="Logo" className="nav-logo" />
         <h1 className="nav-title">
           <Link to="/" >
             Devvy

@@ -6,6 +6,7 @@ import Problems from './pages/Problems';
 import Explore from './pages/Explore';
 import Events from './pages/Events';
 import Profile from './pages/Profile';
+import ProblemInfo from './pages/ProblemInfo';
 
 //Components
 import Navbar from './components/Navbar';
@@ -22,6 +23,9 @@ function App() {
             </Route>
             <Route path="/problems">
               <Problems />
+            </Route>
+            <Route path="/problemsinfo/:problemId">
+              <ProblemInfo />
             </Route>
             <Route path="/explore">
               <Explore />
