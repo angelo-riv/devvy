@@ -2,6 +2,7 @@
 uvicorn app.main:app --reload
 '''
 from fastapi import FastAPI, Depends, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.database import SessionLocal, Base, engine
@@ -9,10 +10,22 @@ from supabase import create_client
 from dotenv import load_dotenv
 import os
 from app.models import User, Questions, Answers
+<<<<<<< HEAD
 from app.dockerContainer import run_user_code
+=======
+from .dockerContainer import run_user_code
+>>>>>>> 8e1ef7fcb1931b2d6995673ea791d7d7a46bdd0d
 import base64
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify a list of allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 load_dotenv()
 url=os.getenv("SUPABASE_URL")
@@ -35,10 +48,8 @@ def get_db():
 
 
 @app.get("/")
-def test_db(db: Session = Depends(get_db)):
-    result = db.execute(text("SELECT version();"))
-    version = result.fetchone()
-    return {"PostgreSQL Version": version[0]}
+def root():
+    return {"message": "Hello world"}
 
 @app.get("/getQuestions")
 def get_problems():
@@ -49,6 +60,18 @@ def get_problems():
 def get_problems():
     questions = session.query(Questions).all()
     return {"question_id": [question.question_id for question in questions], "description": [question.description for question in questions]}
+
+@app.post("/getProblemDescription/{question_id}")
+def problem_description(question_id: int):
+    question = session.query(Questions).filter(Questions.question_id == question_id).first()
+    
+    if not question:
+        return {"error": "Question not found"}
+
+    return {
+        "question_id": question.question_id,
+        "description": question.description
+    }
 
 @app.get("/getProblemId/{question_id}/getUser{username}")
 def get_problem_id(question_id: int, username: str):
