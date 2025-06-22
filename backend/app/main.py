@@ -9,7 +9,7 @@ from supabase import create_client
 from dotenv import load_dotenv
 import os
 from app.models import User, Questions, Answers
-from dockerContainer import run_user_code
+from app.dockerContainer import run_user_code
 import base64
 
 app = FastAPI()
