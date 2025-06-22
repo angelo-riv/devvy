@@ -15,11 +15,13 @@ const CodeEditor = () => {
   const question_id = window.location.pathname.split('/').pop(); 
   const root_folder = question_id;
   const [currentFile, setCurrentFile] = useState('');
-  
+  //Test
+  const username = "testUser"
   
 
 async function handleSubmit() {
   const zip = new JSZip();
+
 
   // Add the code to the ZIP file as main.py
   zip.file("main.py", code); // assuming `code` is your state variable
@@ -29,12 +31,14 @@ async function handleSubmit() {
 
   // Prepare form data for the backend
   const formData = new FormData();
+  console.log("question_id raw:", question_id, typeof question_id);
+  console.log("question_id parsed:", parseInt(question_id, 10), typeof parseInt(question_id, 10));
   formData.append("code", new File([zipBlob], "code.zip")); // name matches FastAPI's `code: UploadFile`
   formData.append("username", username);
-  formData.append("question_id", questionId);
+  formData.append("question_id", parseInt(question_id, 10));
 
   // Send to backend
-  const res = await fetch("/submit", {
+  const res = await fetch("http://127.0.0.1:8000/submit", {
     method: "POST",
     body: formData,
   });
@@ -96,9 +100,6 @@ async function handleSubmit() {
 
   console.log('explorerData:', explorerData);
 
-  const handleSubmit = () => {    
-    console.log("hi")
-  };
 
   return (
   <div className="probleminfo-page">

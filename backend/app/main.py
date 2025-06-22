@@ -1,7 +1,7 @@
 '''
 uvicorn app.main:app --reload
 '''
-from fastapi import FastAPI, Depends, UploadFile
+from fastapi import FastAPI, Depends, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -216,52 +216,50 @@ def get_all_items_recursively(folder: str):
 
 @app.post("/submit")
 async def submit_answer(
-    code: UploadFile,
-    username: str,
-    question_id: int,
+    code: UploadFile = File(...),
+    username: str = Form(...),
+    question_id: int = Form(...),
 ):
+    print("username", username)
+    print("question_id:", question_id, type(question_id))
     zip_bytes = await code.read()
 
-    answers = session.query(Answers).filter(Answers.username == username, Answers.question_id == question_id).first()
-    answer = [x for x in answers]
+    answer = session.query(Answers).filter(
+        Answers.username == username,
+        Answers.question_id == question_id
+    ).first()
 
     results = await run_user_code(zip_bytes)
 
     if results[0] == 0: 
         passed_cases = results[1].count("True")
-        total_cases = results[1].count("True") + results[1].count("False")
+        total_cases = passed_cases + results[1].count("False")
         passed = passed_cases == total_cases
         error = ""
-
     else:
         passed_cases = 0
         total_cases = 0
         error = results[1]
         passed = False
 
-    if len(answer) == 0:
-        
+    if not answer:
         new_answer = Answers(
-        username=username,
-        question_id=question_id,
-        code=zip_bytes,  # bytes for LargeBinary
-        passed_cases=5,
-        total_cases=5,
-        passed=True,
-        error=error
+            username=username,
+            question_id=question_id,
+            code=zip_bytes,
+            passed_cases=passed_cases,
+            total_cases=total_cases,
+            passed=passed,
+            error=error
         )
-
         session.add(new_answer)
-
     else:
-        answerSelected = answer[0].answer_id
+        answer.code = zip_bytes
+        answer.passed_cases = passed_cases
+        answer.total_cases = total_cases
+        answer.passed = passed
+        answer.error = error
 
-        answerSelected.code = zip_bytes  # update with new code
-        answerSelected.passed_cases = passed_cases  
-        answerSelected.total_cases = total_cases
-        answerSelected.passed = passed
-        answerSelected.error = error
-        
     session.commit()
 
     return {
