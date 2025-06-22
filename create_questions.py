@@ -48,7 +48,7 @@ def read_folder_content(folder):
     content = ""
     for file_path in files:
         filename = file_path.lower()
-        if any(skip in filename for skip in ["dockerfile", "readme", "test"]):
+        if any(skip in filename for skip in ["dockerfile", "readme"]):
             continue
         try:
             res = supabase.storage.from_(BUCKET).download(file_path)
@@ -68,11 +68,11 @@ You are an AI that reads code and generates metadata for a coding question.
 
 Given the following code files, extract:
 - A clear problem name (title)
-- A short and helpful problem description
+- A short feature that the user must implement into the code such that the test cases will still run and evalute the code
 - Tags (frameworks, libraries, or languages used)
 - A difficulty level (easy, medium, or hard)
 
-**IGNORE ALL DOCKERFILES, README FILES, AND TEST CASES.**
+**IGNORE ALL DOCKERFILES AND README FILES**
 
 Return the result as JSON in this format:
 {{

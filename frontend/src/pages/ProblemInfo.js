@@ -16,7 +16,7 @@ const CodeEditor = () => {
   const question_id = window.location.pathname.split('/').pop(); 
   const root_folder = question_id;
   const [currentFile, setCurrentFile] = useState('');
-
+  
   useEffect(() => {
     async function fetchExplorer() {
       const res = await fetch(`http://127.0.0.1:8000/problem-code/${root_folder}`, {
@@ -69,42 +69,38 @@ const CodeEditor = () => {
 
   console.log('explorerData:', explorerData);
 
-  const handleSubmit = async () => {  
-  try {
-    const username = "testuser";
-    const res = await axios.get(`http://127.0.0.1:8000/getProblemId/${question_id}/getUser${username}`);
-    const data = res.data;
-    setResult(data);
-    console.log("hi",result);
-    if (!data.submission) {
-      console.log("No submission found");
-      return;
-    }
+//Test
+const username = "testUser";
 
-    if (!data.code) {
-      console.log("No code submitted");
-      return;
-    }
+const handleSubmit = async () => {
+  const zip = new JSZip();
 
-    const base64String = data.code;
-    const binaryString = atob(base64String);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
 
-    const jszip = new JSZip();
-    const zip = await jszip.loadAsync(bytes);
-    for (const filename of Object.keys(zip.files)) {
-      const content = await zip.files[filename].async("string");
-      console.log(`File: ${filename}`, content);
-    }
-    setActiveTab("result");
-    console.log("hi")
-  } catch (error) {
-    console.error("error", error);
-  }
+  // Add the code to the ZIP file as main.py
+  zip.file("main.py", code); // assuming `code` is your state variable
+
+  // Generate the zip blob
+  const zipBlob = await zip.generateAsync({ type: "blob" });
+
+  // Prepare form data for the backend
+  const formData = new FormData();
+  console.log("question_id raw:", question_id, typeof question_id);
+  console.log("question_id parsed:", parseInt(question_id, 10), typeof parseInt(question_id, 10));
+  formData.append("code", new File([zipBlob], "code.zip")); // name matches FastAPI's `code: UploadFile`
+  formData.append("username", username);
+  formData.append("question_id", parseInt(question_id, 10));
+
+  // Send to backend
+  const res = await fetch("http://127.0.0.1:8000/submit", {
+    method: "POST",
+    body: formData,
+  });
+
+  const result = await res.json();
+  console.log(result);
+  console.log(result.hasError)
+  setActiveTab("result")
+
 };
 
   return (
@@ -244,19 +240,19 @@ const CodeEditor = () => {
                         )}
                         {activeTab === 'result' && (
                           <div className="result-section">
-                            {result.passed === false && (
+                            {!result.hasError && (
                               <>
                               <div className="result-status failed">
                               <span>{result.error}</span>
                             </div>
                             <div className="result-details">
-                              <p>Test Cases Passed: {result.passed_cases} of {result.total_cases}</p>
+                              <p>Test Cases Passed: {result.passed_cases} of {result.total_cases} </p>
                               <p>Runtime: 45ms</p>
                               <p>Memory: 2.1MB</p>
                             </div>
                             </>
                             )}
-                            {result.passed === true && (
+                            {result.hasError && (
                               <>
                               <div className="result-status success">
                               <span>{result.error ?? "All test cases Passed!"}</span>
