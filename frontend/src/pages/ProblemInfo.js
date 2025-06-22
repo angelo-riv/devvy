@@ -5,7 +5,7 @@ import Solutions from '../components/Solutions';
 import Submissions from '../components/Submissions';
 
 const CodeEditor = () => {
-  const [activeTab, setActiveTab] = useState('testcase');
+  const [activeTab, setActiveTab] = useState('result');
   const [activeSection, setActiveSection] = useState('code');
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [problemData, setProblemData] = useState([]);
@@ -66,6 +66,10 @@ const CodeEditor = () => {
   }, [question_id]);
 
   console.log('explorerData:', explorerData);
+
+  const handleSubmit = () => {    
+    console.log("hi")
+  };
 
   return (
   <div className="probleminfo-page">
@@ -220,8 +224,7 @@ const CodeEditor = () => {
                       </div>
 
                       <div className="editor-actions">
-                        <button className="btn-outline">Run</button>
-                        <button className="btn-primary">Submit</button>
+                        <button className="btn-primary" onClick = {()=> handleSubmit()}>Submit</button>
                       </div>
                     </div>
                   </>
