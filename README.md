@@ -6,13 +6,13 @@
 
 ---
 
-## 📸 Overview
+##  Overview
 
 Devvy replaces algorithmic puzzle platforms with realistic project challenges. Students build full-stack solutions, and recruiters assess candidates based on how they think — not just what they solve.
 
 ---
 
-## ✨ Features
+## Features
 
 -  Solve real-world tasks in full-stack environments
 -  Build public, peer-reviewed portfolios
@@ -22,7 +22,7 @@ Devvy replaces algorithmic puzzle platforms with realistic project challenges. S
 
 ---
 
-## 🧱 Architecture
+##  Architecture
 [ GitHub Scraper ] → [ AI Prompt Generator (ChatGPT/Gemini) ] → [ Devvy Challenge Builder ]
 ↓
 [ Supabase DB ]
@@ -38,7 +38,7 @@ Devvy replaces algorithmic puzzle platforms with realistic project challenges. S
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 | Frontend      | Backend       | AI Integration | Storage & Infra     |
 |---------------|---------------|----------------|----------------------|
@@ -47,7 +47,7 @@ Devvy replaces algorithmic puzzle platforms with realistic project challenges. S
 
 ---
 
-## 🧪 Setup Instructions
+## Setup Instructions
 
 1. **Clone the repo**
    ```bash
