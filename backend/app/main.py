@@ -33,7 +33,6 @@ bucket=os.getenv("SUPABASE_BUCKET")
 supabase = create_client(url, key)
 
 Base.metadata.create_all(bind=engine)
-session = SessionLocal()
 
 
 def get_db():
@@ -50,32 +49,32 @@ def root():
     return {"message": "Hello world"}
 
 @app.get("/getQuestions")
-def get_problems():
+def get_problems(session = Depends(get_db)):
     questions = session.query(Questions).all()
     return {"question_id": [question.question_id for question in questions], "question": [get_problem(question.storage_id) for question in questions]}
 
 @app.get("/questions/count")
-def count_questions():
+def count_questions(session = Depends(get_db)):
     count = session.query(Questions).count()
     return {"count": count}
 
 @app.get("/answercount")
-def count_solutions():
+def count_solutions(session = Depends(get_db)):
     count = session.query(Answers).count()
     return {"count": count}
 
 @app.get("/usercount")
-def count_users():
+def count_users(session = Depends(get_db)):
     count = session.query(User).count()
     return {"count": count}
 
 @app.get("/getQuestionsDescription")
-def get_problems():
+def get_problems(session = Depends(get_db)):
     questions = session.query(Questions).all()
     return {"tags": [question.tags for question in questions], "question_id": [question.question_id for question in questions], "question": [question.question for question in questions], "description": [question.description for question in questions],"diff": [question.diff for question in questions]}
 
 @app.post("/getUserData/{username}")
-def get_user_data(username: str):
+def get_user_data(username: str, session = Depends(get_db)):
     user = session.query(User).filter(User.username == username).first()
     
     if not user:
@@ -91,7 +90,7 @@ def get_user_data(username: str):
     }
 
 @app.post("/getProblemDescription/{question_id}")
-def problem_description(question_id: int):
+def problem_description(question_id: int, session = Depends(get_db)):
     question = session.query(Questions).filter(Questions.question_id == question_id).first()
     
     if not question:
@@ -106,7 +105,7 @@ def problem_description(question_id: int):
     }
 
 @app.get("/getProblemId/{question_id}/getUser{username}")
-def get_problem_id(question_id: int, username: str):
+def get_problem_id(question_id: int, username: str, session = Depends(get_db)):
     answer = session.query(Answers).filter(Answers.username == username, Answers.question_id == question_id).first()
     
     if not answer:
@@ -220,6 +219,7 @@ async def submit_answer(
     code: UploadFile = File(...),
     username: str = Form(...),
     question_id: int = Form(...),
+    session = Depends(get_db)
 ):
     print("username", username)
     print("question_id:", question_id, type(question_id))
