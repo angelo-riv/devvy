@@ -1,0 +1,11 @@
+{
+  "name": "trading-bot",
+  "version": "1.0.0",
+  "description": "LeetCode-style trading bot backend challenge",
+  "main": "test.js",
+  "scripts": {
+    "start": "node test.js"
+  },
+  "author": "",
+  "license": "MIT"
+}
