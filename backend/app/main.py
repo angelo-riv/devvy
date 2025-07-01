@@ -1,17 +1,29 @@
 '''
 uvicorn app.main:app --reload
 '''
+print("main.py started")
 from fastapi import FastAPI, Depends, UploadFile, File, Form
+print("fast api started")
 from fastapi.middleware.cors import CORSMiddleware
+print("fast api middleware started")
 from sqlalchemy import text
+print("sql alchemy started")
 from sqlalchemy.orm import Session
+print("sql alchemy.orm started")
 from app.database import SessionLocal, Base, engine
+print("database started")
 from supabase import create_client
+print("supabase started")
 from dotenv import load_dotenv
+print("dotenv started")
 import os
+print("os started")
 from app.models import User, Questions, Answers
+print("app.models started")
 from .dockerContainer import run_user_code
+print("docker started")
 import base64
+print("base64 started")
 from collections import defaultdict
 
 
@@ -34,6 +46,13 @@ supabase = create_client(url, key)
 
 Base.metadata.create_all(bind=engine)
 
+try:
+    session = SessionLocal()
+    print("DB session successfully created")
+except Exception as e:
+    import logging
+    logging.error("Failed to create DB session: %s", e)
+    session = None
 
 def get_db():
     db = SessionLocal()
